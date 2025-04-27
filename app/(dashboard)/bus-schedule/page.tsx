@@ -82,14 +82,14 @@ export default function BusSchedule() {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <h1>Bus Schedule</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-4xl font-bold">Bus Schedule</h1>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-300">
-              Add A Bus Schedule
-            </Button>
-          </DialogTrigger>
+            <DialogTrigger asChild>
+              <Button className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded transition-colors duration-300 shadow-md shadow-orange-300">
+                Add A Bus Schedule
+              </Button>
+            </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Add A Bus Schedule</DialogTitle>
@@ -141,26 +141,31 @@ export default function BusSchedule() {
       </div>
       {buses && buses.length > 0 ? (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <table className="w-full text-sm text-left text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+          <table className="w-full text-sm text-left text-gray-700 border border-gray-300 rounded-lg overflow-hidden shadow-lg">
+            <thead className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
               <tr>
-                <th scope="col" className="px-6 py-3">Depart From</th>
-                <th scope="col" className="px-6 py-3">Depart Time</th>
-                <th scope="col" className="px-6 py-3">Destination</th>
-                <th scope="col" className="px-6 py-3">Bus Registration</th>
-                <th scope="col" className="px-6 py-3">Bus Driver</th>
-                <th scope="col" className="px-6 py-3">Model</th>
+                <th scope="col" className="px-6 py-4 font-semibold">Depart From</th>
+                <th scope="col" className="px-6 py-4 font-semibold">Depart Time</th>
+                <th scope="col" className="px-6 py-4 font-semibold">Destination</th>
+                <th scope="col" className="px-6 py-4 font-semibold">Bus Registration</th>
+                <th scope="col" className="px-6 py-4 font-semibold">Bus Driver</th>
+                <th scope="col" className="px-6 py-4 font-semibold">Model</th>
               </tr>
             </thead>
             <tbody>
-              {buses.map((bus) => (
-                <tr key={bus.id} className="bg-white border-b hover:bg-gray-100">
+              {buses.map((bus, index) => (
+                <tr
+                  key={bus.id}
+                  className={`${
+                    index % 2 === 0 ? "bg-orange-50" : "bg-yellow-50"
+                  } hover:bg-orange-100 transition-colors duration-300`}
+                >
                   <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{bus.depart_from}</td>
-                  <td className="px-6 py-4">{bus.depart_time}</td>
-                  <td className="px-6 py-4">{bus.destination}</td>
-                  <td className="px-6 py-4">{bus.bus_registration}</td>
-                  <td className="px-6 py-4">{bus.bus_driver}</td>
-                  <td className="px-6 py-4">{bus.model}</td>
+                  <td className="px-6 py-4 text-gray-800">{bus.depart_time}</td>
+                  <td className="px-6 py-4 text-gray-800">{bus.destination}</td>
+                  <td className="px-6 py-4 text-gray-800">{bus.bus_registration}</td>
+                  <td className="px-6 py-4 text-gray-800">{bus.bus_driver}</td>
+                  <td className="px-6 py-4 text-gray-800">{bus.model}</td>
                 </tr>
               ))}
             </tbody>

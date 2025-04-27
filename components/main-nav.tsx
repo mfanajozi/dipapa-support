@@ -19,7 +19,7 @@ const navItems = [
     icon: Users,
   },
   {
-    title: "Queries",
+    title: "Accommodation Queries",
     href: "/queries",
     icon: HelpCircle,
   },
@@ -29,7 +29,12 @@ const navItems = [
     icon: HelpCircle,
   },
   {
-    title: "Stipends",
+    title: "Training Centres",
+    href: "/training-centres",
+    icon: FileText,
+  },
+  {
+    title: "African Bank Queries",
     href: "/stipends",
     icon: FileText,
   },
@@ -39,7 +44,7 @@ const navItems = [
     icon: FileText,
   },
   {
-    title: "Content",
+    title: "Announcements",
     href: "/content",
     icon: FileText,
     submenu: [

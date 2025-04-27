@@ -224,7 +224,7 @@ export default function QueriesPage() {
   return (
     <div className="flex flex-col gap-6 pb-8 px-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Queries</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Accommodation Queries</h1>
         <p className="text-muted-foreground">Manage queries and feedback.</p>
       </div>
 

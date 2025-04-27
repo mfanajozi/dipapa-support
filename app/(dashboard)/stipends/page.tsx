@@ -51,6 +51,10 @@ const columns = [
       const stipend = row.original;
       const [status, setStatus] = useState(stipend.status);
 
+      useEffect(() => {
+        setStatus(stipend.status);
+      }, [stipend.status]);
+
       const handleStatusChange = async (newStatus: string) => {
         try {
           const now = new Date().toLocaleString();
