@@ -13,6 +13,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { LogOut, Settings, User } from "lucide-react"
 import Link from "next/link"
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface UserNavProps {
   user: {
@@ -64,7 +69,13 @@ export function UserNav({ user }: UserNavProps) {
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={async () => {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+              console.error("Error logging out:", error);
+            }
+            window.location.href = '/(auth)/login';
+          }}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>
@@ -73,4 +84,3 @@ export function UserNav({ user }: UserNavProps) {
     </div>
   )
 }
-

@@ -53,7 +53,7 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     let { data, error } = await supabase
       .from('students')
-      .select('*')
+      .select('student_id, email, phone, sdp_match, id_number, first_name, middle_name, surname, start_date, date_of_birth, gender, race, comment, program, trade, bio, final_selection, initiated_registration_process, african_bank_account_number, medical_fitness, user_id, auth_user_id');
 
     if (error) {
       console.error("Error fetching users:", error);

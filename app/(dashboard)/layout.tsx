@@ -1,22 +1,55 @@
-import type React from "react"
-import { Logo } from "@/components/logo"
-import { MainNav } from "@/components/main-nav"
-import { MobileNav } from "@/components/mobile-nav"
-import { UserNav } from "@/components/user-nav"
-import { Toaster } from "@/components/ui/toaster"
+"use client"
+import { ReactNode, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
+import { MobileNav } from '@/components/mobile-nav';
+import { Logo } from '@/components/logo';
+import { UserNav } from '@/components/user-nav';
+import { MainNav } from '@/components/main-nav';
+import { Toast } from '@/components/ui/toast';
+import { Session } from '@supabase/supabase-js';
 
-export default function DashboardLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
-  // Mock user data - in a real app, this would come from your auth system
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    async function getSessionAndSet() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error("Error getting session:", error);
+      }
+      setSession(session);
+    }
+    getSessionAndSet();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!session) {
+      router.push('/(auth)/login');
+    }
+  }, [session, router]);
+
   const user = {
-    id: "u1",
-    name: "Admin User",
-    email: "admin@dipapa.com",
-    role: "Administrator",
-    image: "",
+    id: 'u1',
+    name: 'Admin User',
+    email: 'admin@dipapa.com',
+    role: 'Administrator',
+    image: '',
+  };
+
+  if (!session) {
+    return null; // Or a loading indicator
   }
 
   return (
@@ -38,7 +71,7 @@ export default function DashboardLayout({
         </aside>
         <main className="flex w-full flex-col overflow-hidden pt-6">{children}</main>
       </div>
-      <Toaster />
+      <Toast />
     </div>
-  )
+  );
 }
