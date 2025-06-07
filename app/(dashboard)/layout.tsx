@@ -36,15 +36,21 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!session) {
-      router.push('/(auth)/login');
+      router.push('/login');
     }
   }, [session, router]);
 
-  const user = {
-    id: 'u1',
-    name: 'Admin User',
-    email: 'admin@dipapa.com',
-    role: 'Administrator',
+  const user = session && session.user ? {
+    id: session.user.id,
+    name: session.user.user_metadata?.name || session.user.email,
+    email: session.user.email,
+    role: session.user.user_metadata?.role || '',
+    image: session.user.user_metadata?.avatar_url || '',
+  } : {
+    id: '',
+    name: '',
+    email: '',
+    role: '',
     image: '',
   };
 

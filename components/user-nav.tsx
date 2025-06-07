@@ -74,7 +74,7 @@ export function UserNav({ user }: UserNavProps) {
             if (error) {
               console.error("Error logging out:", error);
             }
-            window.location.href = '/(auth)/login';
+            window.location.href = '/login';
           }}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
