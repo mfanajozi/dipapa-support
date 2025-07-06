@@ -7,23 +7,7 @@ import { StatCard } from "@/components/ui/stat-card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { StatusBadge } from "@/components/ui/status-badge"
-
-// This would normally be fetched from your database
-const mockStats = {
-  totalUsers: 1248,
-  activeQueries: 42,
-  resolvedQueries: 156,
-  pendingStipends: 23,
-  visitorCodes: {
-    generated: 89,
-    used: 67,
-    expired: 12,
-  },
-  supportTickets: {
-    open: 18,
-    closed: 124,
-  },
-}
+import { createServerSupabaseClient } from "@/lib/supabase/server"
 
 const mockRecentQueries = [
   {
@@ -73,7 +57,52 @@ function DashboardSkeleton() {
   )
 }
 
-export default function DashboardPage() {
+async function getDashboardStats() {
+  const supabase = createServerSupabaseClient()
+
+  // Fetch all counts in parallel
+  const [studentsRes, queriesRes, stipendsRes, supportRes, visitorsRes] = await Promise.all([
+    supabase.from('students').select('*', { count: 'exact', head: true }),
+    supabase.from('queries').select('id', { count: 'exact', head: true }),
+    supabase.from('stipend').select('id', { count: 'exact', head: true }).not('status', 'in', '(Rejected,Closed)'),
+    supabase.from('support').select('id', { count: 'exact', head: true }),
+    supabase.from('visitors').select('id', { count: 'exact', head: true }),
+  ])
+
+  if (studentsRes.error) {
+    console.error('Error fetching students count:', studentsRes.error);
+  }
+  if (queriesRes.error) {
+    console.error('Error fetching queries count:', queriesRes.error);
+  }
+  if (stipendsRes.error) {
+    console.error('Error fetching stipends count:', stipendsRes.error);
+  }
+  if (supportRes.error) {
+    console.error('Error fetching support tickets count:', supportRes.error);
+  }
+  if (visitorsRes.error) {
+    console.error('Error fetching visitors count:', visitorsRes.error);
+  }
+
+  console.log('Students Count Response:', studentsRes)
+  console.log('Queries Count Response:', queriesRes)
+  console.log('Stipends Count Response:', stipendsRes)
+  console.log('Support Tickets Count Response:', supportRes)
+  console.log('Visitors Count Response:', visitorsRes)
+
+  return {
+    totalUsers: studentsRes.count || 0,
+    activeQueries: queriesRes.count || 0,
+    pendingStipends: stipendsRes.count || 0,
+    supportTickets: supportRes.count || 0,
+    visitorCodesGenerated: visitorsRes.count || 0,
+  }
+}
+
+export default async function DashboardPage() {
+  const stats = await getDashboardStats()
+
   return (
     <div className="flex flex-col gap-6 pb-8 px-6">
       <div className="flex flex-col gap-2">
@@ -85,28 +114,28 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title="Total Users"
-            value={mockStats.totalUsers}
+            value={stats.totalUsers}
             description="Active registered users"
             icon={<Users className="h-4 w-4" />}
             trend={{ value: 12, isPositive: true }}
           />
           <StatCard
             title="Active Queries"
-            value={mockStats.activeQueries}
+            value={stats.activeQueries}
             description="Queries awaiting resolution"
             icon={<HelpCircle className="h-4 w-4" />}
             trend={{ value: 8, isPositive: false }}
           />
           <StatCard
             title="Pending Stipends"
-            value={mockStats.pendingStipends}
+            value={stats.pendingStipends}
             description="Stipend requests to process"
             icon={<FileText className="h-4 w-4" />}
             trend={{ value: 5, isPositive: false }}
           />
           <StatCard
             title="Support Tickets"
-            value={mockStats.supportTickets.open}
+            value={stats.supportTickets}
             description="Open support tickets"
             icon={<MessageSquare className="h-4 w-4" />}
             trend={{ value: 3, isPositive: true }}
@@ -167,21 +196,21 @@ export default function DashboardPage() {
                   <p className="text-sm font-medium leading-none">Generated</p>
                   <p className="text-sm text-muted-foreground">Total codes created</p>
                 </div>
-                <p className="text-2xl font-bold">{mockStats.visitorCodes.generated}</p>
+                <p className="text-2xl font-bold">{stats.visitorCodesGenerated}</p>
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm font-medium leading-none">Used</p>
                   <p className="text-sm text-muted-foreground">Codes that have been used</p>
                 </div>
-                <p className="text-2xl font-bold">{mockStats.visitorCodes.used}</p>
+                <p className="text-2xl font-bold">N/A</p>
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm font-medium leading-none">Expired</p>
                   <p className="text-sm text-muted-foreground">Codes that have expired</p>
                 </div>
-                <p className="text-2xl font-bold">{mockStats.visitorCodes.expired}</p>
+                <p className="text-2xl font-bold">N/A</p>
               </div>
             </div>
           </CardContent>

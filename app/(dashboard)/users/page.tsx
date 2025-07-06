@@ -74,7 +74,7 @@ export default function UsersPage() {
     let { data, error } = await supabase
       .from('students')
       .select('*')
-      .eq('id', user.id)
+      .eq('student_id', user.student_id)
       .single();
 
     if (error) {
@@ -144,7 +144,7 @@ export default function UsersPage() {
         program,
         trade,
       })
-      .eq('id', selectedUser.id);
+      .eq('student_id', selectedUser.student_id);
 
     if (error) {
       console.error("Error updating user:", error);

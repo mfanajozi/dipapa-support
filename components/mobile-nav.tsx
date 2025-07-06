@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BarChart3, Users, MessageSquare, FileText, HelpCircle, UserPlus, FileBarChart, Menu, X } from "lucide-react"
+import { BarChart3, Users, MessageSquare, FileText, HelpCircle, UserPlus, FileBarChart, Menu, X, MailCheck } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -69,6 +69,11 @@ const navItems = [
     title: "Reports",
     href: "/reports",
     icon: FileBarChart,
+  },
+  {
+    title: "Email Confirmation",
+    href: "/email-confirmation",
+    icon: MailCheck,
   },
 ]
 
